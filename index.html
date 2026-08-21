@@ -3,33 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Form</title>
+    <title>Modern Glassmorphism Login & Theme Customizer</title>
+    <meta name="description" content="Sleek glassmorphism login portal featuring interactive dynamic themes, aurora effects, cyberpunk neon presets, and particle animations.">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="login-wrapper">
-        <form action="#">
-            <h2>Login</h2>
-            <div class="input-field">
-                <input type="email" required>
-                <label>Enter your Email</label>
+<body class="theme-aurora">
+
+    <!-- Background Canvas for Interactive Particles -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Layer for Local Image Wallpaper theme -->
+    <div class="wallpaper-layer" id="wallpaperLayer"></div>
+
+    <!-- Ambient Glowing Radial Orbs -->
+    <div class="ambient-glow-container" id="glowContainer">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Floating Theme Switcher & Settings Toolbar -->
+    <header class="theme-toolbar">
+        <nav class="theme-pill" aria-label="Theme presets">
+            <button class="theme-btn active" data-theme="aurora" title="Aurora Glow" id="themeBtnAurora">
+                <span class="theme-dot"></span>
+                <span>Aurora</span>
+            </button>
+            <button class="theme-btn" data-theme="cyberpunk" title="Cyberpunk Neon" id="themeBtnCyberpunk">
+                <span class="theme-dot"></span>
+                <span>Cyberpunk</span>
+            </button>
+            <button class="theme-btn" data-theme="dark-glass" title="Dark Glass" id="themeBtnDarkGlass">
+                <span class="theme-dot"></span>
+                <span>Dark Glass</span>
+            </button>
+            <button class="theme-btn" data-theme="sunset" title="Sunset Horizon" id="themeBtnSunset">
+                <span class="theme-dot"></span>
+                <span>Sunset</span>
+            </button>
+            <button class="theme-btn" data-theme="wallpaper" title="Image Wallpaper" id="themeBtnWallpaper">
+                <span class="theme-dot"></span>
+                <span>Wallpaper</span>
+            </button>
+        </nav>
+
+        <button class="icon-btn" id="settingsToggleBtn" title="Customize Glass & Effects" aria-label="Customizer settings">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <!-- Glassmorphism Customization Settings Panel -->
+    <aside class="settings-panel" id="settingsPanel" aria-label="Customizer Panel">
+        <div class="settings-header">
+            <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                Customizer
+            </h3>
+            <button class="close-btn" id="closeSettingsBtn" aria-label="Close settings">&times;</button>
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">
+                <span>Glass Blur Intensity</span>
+                <span id="blurValue">16px</span>
             </div>
-            <div class="input-field">
-                <input type="password" required>
-                <label>Enter your password</label>
+            <input type="range" id="blurSlider" class="range-slider" min="4" max="32" value="16">
+        </div>
+
+        <div class="setting-group">
+            <div class="setting-label">
+                <span>Glass Opacity</span>
+                <span id="opacityValue">25%</span>
             </div>
+            <input type="range" id="opacitySlider" class="range-slider" min="5" max="75" value="25">
+        </div>
+
+        <div class="setting-group switch-group">
+            <div class="setting-label" style="margin-bottom: 0;">
+                <span>Particle Animation</span>
+            </div>
+            <label class="toggle-switch" for="particleToggle">
+                <input type="checkbox" id="particleToggle" checked>
+                <span class="slider-round"></span>
+            </label>
+        </div>
+
+        <button class="reset-btn" id="resetDefaultsBtn">Reset to Defaults</button>
+    </aside>
+
+    <!-- Main Glassmorphic Login Card -->
+    <main class="login-wrapper">
+        <div class="login-header">
+            <div class="brand-badge">Secure Portal</div>
+            <h2>Welcome Back</h2>
+            <p>Enter your credentials to access your account</p>
+        </div>
+
+        <form id="loginForm" autocomplete="on">
+            <div class="input-field">
+                <input type="email" id="emailInput" placeholder=" " required autocomplete="email">
+                <label for="emailInput">Email Address</label>
+            </div>
+
+            <div class="input-field">
+                <input type="password" id="passwordInput" placeholder=" " required autocomplete="current-password">
+                <label for="passwordInput">Password</label>
+                <button type="button" class="pwd-toggle-btn" id="togglePassword" aria-label="Show password">
+                    <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <svg class="eye-slash" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                </button>
+            </div>
+
             <div class="password-option">
                 <label for="remember">
                     <input type="checkbox" id="remember">
-                    <p>Remember me</p>
+                    <span>Remember me</span>
                 </label>
-                <a href="#">Forget password?</a>
+                <a href="#forgot" id="forgotPasswordLink">Forgot password?</a>
             </div>
-            <button type="submit">Log in</button>
+
+            <button type="submit" class="submit-btn" id="submitBtn">
+                <span>Sign In</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+
             <div class="account-option">
-                <p>Don't have an account? <a href="#">Register</a></p>
+                <p>Don't have an account? <a href="#register" id="registerLink">Create one now</a></p>
             </div>
         </form>
+    </main>
+
+    <!-- Feedback Toast Notification -->
+    <div class="toast" id="toast" role="status" aria-live="polite">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMsg">Notification message</span>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
