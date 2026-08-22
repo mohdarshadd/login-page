@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Glassmorphism Login & Theme Customizer</title>
-    <meta name="description" content="Sleek glassmorphism login portal featuring interactive dynamic themes, aurora effects, cyberpunk neon presets, and particle animations.">
+    <title>Modern Glassmorphism Auth Portal & Customizer</title>
+    <meta name="description" content="Sleek glassmorphism authentication suite featuring dynamic multi-mode forms (Sign In, Sign Up, Reset), password security meter, 3D tilt physics, procedural sound FX, aurora lighting, and custom theme engine.">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-aurora">
@@ -83,6 +83,21 @@
             <input type="range" id="opacitySlider" class="range-slider" min="5" max="75" value="25">
         </div>
 
+        <div class="setting-group">
+            <div class="setting-label">
+                <span>Custom Accent Glow</span>
+                <span id="accentHexDisplay">#38ef7d</span>
+            </div>
+            <div class="color-picker-row">
+                <input type="color" id="accentColorPicker" value="#38ef7d" class="color-input">
+                <button type="button" class="preset-color-chip" data-color="#38ef7d" style="background:#38ef7d;"></button>
+                <button type="button" class="preset-color-chip" data-color="#00f0ff" style="background:#00f0ff;"></button>
+                <button type="button" class="preset-color-chip" data-color="#ff007f" style="background:#ff007f;"></button>
+                <button type="button" class="preset-color-chip" data-color="#ff9f43" style="background:#ff9f43;"></button>
+                <button type="button" class="preset-color-chip" data-color="#a855f7" style="background:#a855f7;"></button>
+            </div>
+        </div>
+
         <div class="setting-group switch-group">
             <div class="setting-label" style="margin-bottom: 0;">
                 <span>Particle Animation</span>
@@ -93,59 +108,285 @@
             </label>
         </div>
 
+        <div class="setting-group switch-group">
+            <div class="setting-label" style="margin-bottom: 0;">
+                <span>3D Tilt Physics</span>
+            </div>
+            <label class="toggle-switch" for="tiltToggle">
+                <input type="checkbox" id="tiltToggle" checked>
+                <span class="slider-round"></span>
+            </label>
+        </div>
+
+        <div class="setting-group switch-group">
+            <div class="setting-label" style="margin-bottom: 0;">
+                <span>UI Sound FX</span>
+            </div>
+            <label class="toggle-switch" for="soundToggle">
+                <input type="checkbox" id="soundToggle" checked>
+                <span class="slider-round"></span>
+            </label>
+        </div>
+
         <button class="reset-btn" id="resetDefaultsBtn">Reset to Defaults</button>
     </aside>
 
-    <!-- Main Glassmorphic Login Card -->
-    <main class="login-wrapper">
-        <div class="login-header">
-            <div class="brand-badge">Secure Portal</div>
-            <h2>Welcome Back</h2>
-            <p>Enter your credentials to access your account</p>
-        </div>
+    <!-- Main 3D Perspective Card Container -->
+    <div class="card-perspective-container">
+        <main class="login-wrapper" id="authCard">
+            <!-- Dynamic Specular Glare Layer for 3D Tilt -->
+            <div class="card-glare" id="cardGlare"></div>
 
-        <form id="loginForm" autocomplete="on">
-            <div class="input-field">
-                <input type="email" id="emailInput" placeholder=" " required autocomplete="email">
-                <label for="emailInput">Email Address</label>
-            </div>
-
-            <div class="input-field">
-                <input type="password" id="passwordInput" placeholder=" " required autocomplete="current-password">
-                <label for="passwordInput">Password</label>
-                <button type="button" class="pwd-toggle-btn" id="togglePassword" aria-label="Show password">
-                    <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <svg class="eye-slash" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                        <line x1="1" y1="1" x2="23" y2="23"></line>
-                    </svg>
+            <!-- Auth Mode Navigation Tabs -->
+            <div class="auth-tabs" role="tablist">
+                <button class="auth-tab active" data-tab="signin" id="tabSignIn" role="tab" aria-selected="true">
+                    Sign In
+                </button>
+                <button class="auth-tab" data-tab="signup" id="tabSignUp" role="tab" aria-selected="false">
+                    Create Account
                 </button>
             </div>
 
-            <div class="password-option">
-                <label for="remember">
-                    <input type="checkbox" id="remember">
-                    <span>Remember me</span>
-                </label>
-                <a href="#forgot" id="forgotPasswordLink">Forgot password?</a>
+            <!-- ============================================== -->
+            <!-- 1. SIGN IN FORM VIEW -->
+            <!-- ============================================== -->
+            <div class="auth-view active" id="viewSignIn">
+                <div class="login-header">
+                    <div class="brand-badge">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        Secure Portal
+                    </div>
+                    <h2>Welcome Back</h2>
+                    <p>Enter your credentials to access your secure workspace</p>
+                </div>
+
+                <!-- Quick SSO Social Logins -->
+                <div class="social-login-bar">
+                    <button type="button" class="social-btn" data-provider="Google" title="Sign in with Google">
+                        <svg width="18" height="18" viewBox="0 0 24 24">
+                            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.4 8.8 5 12 5z"/>
+                            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                            <path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.7s.1-2 .4-2.7L1.6 6.4C.6 8.4 0 10.6 0 13s.6 4.6 1.6 6.6l3.7-4.9z"/>
+                            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.2 0-5.8-2.4-6.7-5.3L1.6 16c1.9 3.8 5.8 7 10.4 7z"/>
+                        </svg>
+                        <span>Google</span>
+                    </button>
+                    <button type="button" class="social-btn" data-provider="GitHub" title="Sign in with GitHub">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                        </svg>
+                        <span>GitHub</span>
+                    </button>
+                    <button type="button" class="social-btn" data-provider="Apple" title="Sign in with Apple">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.87c.6-1.12.98-2.69.83-4.27-1.37.07-3 1.02-3.69 2.14-.54.91-.98 2.5-.83 4.04 1.5.12 3.08-.85 3.69-1.91z"/>
+                        </svg>
+                        <span>Apple</span>
+                    </button>
+                </div>
+
+                <div class="auth-divider">
+                    <span>or continue with email</span>
+                </div>
+
+                <form id="loginForm" autocomplete="on">
+                    <div class="input-field">
+                        <input type="email" id="emailInput" placeholder=" " required autocomplete="email">
+                        <label for="emailInput">Email Address</label>
+                        <span class="field-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="password" id="passwordInput" placeholder=" " required autocomplete="current-password">
+                        <label for="passwordInput">Password</label>
+                        <button type="button" class="pwd-toggle-btn" id="togglePassword" aria-label="Show password">
+                            <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-slash" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="password-option">
+                        <label for="remember">
+                            <input type="checkbox" id="remember">
+                            <span>Remember me</span>
+                        </label>
+                        <a href="#forgot" id="forgotPasswordLink">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span>Sign In</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="account-option">
+                        <p>Don't have an account? <a href="#signup" id="switchToSignUp">Create one now</a></p>
+                    </div>
+                </form>
             </div>
 
-            <button type="submit" class="submit-btn" id="submitBtn">
-                <span>Sign In</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                    <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-            </button>
+            <!-- ============================================== -->
+            <!-- 2. SIGN UP / REGISTRATION VIEW -->
+            <!-- ============================================== -->
+            <div class="auth-view" id="viewSignUp">
+                <div class="login-header">
+                    <div class="brand-badge">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7.5" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        Get Started
+                    </div>
+                    <h2>Create Account</h2>
+                    <p>Join the next-generation workspace in seconds</p>
+                </div>
 
-            <div class="account-option">
-                <p>Don't have an account? <a href="#register" id="registerLink">Create one now</a></p>
+                <form id="signupForm" autocomplete="on">
+                    <div class="input-field">
+                        <input type="text" id="regNameInput" placeholder=" " required autocomplete="name">
+                        <label for="regNameInput">Full Name</label>
+                        <span class="field-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="email" id="regEmailInput" placeholder=" " required autocomplete="email">
+                        <label for="regEmailInput">Work Email</label>
+                        <span class="field-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="password" id="regPasswordInput" placeholder=" " required autocomplete="new-password">
+                        <label for="regPasswordInput">Password</label>
+                        <button type="button" class="pwd-toggle-btn" id="toggleRegPassword" aria-label="Show password">
+                            <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg class="eye-slash" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Interactive Password Strength Meter -->
+                    <div class="password-strength-container" id="pwdStrengthContainer">
+                        <div class="strength-bar-track">
+                            <div class="strength-bar-fill" id="strengthBarFill"></div>
+                        </div>
+                        <div class="strength-status-row">
+                            <span>Password Strength:</span>
+                            <span class="strength-text" id="strengthText">None</span>
+                        </div>
+                        <div class="strength-rules">
+                            <span class="rule-chip" id="ruleLength">8+ Chars</span>
+                            <span class="rule-chip" id="ruleUpper">Upper & Lower</span>
+                            <span class="rule-chip" id="ruleNumber">Number</span>
+                            <span class="rule-chip" id="ruleSymbol">Special Symbol</span>
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="password" id="regConfirmPassword" placeholder=" " required autocomplete="new-password">
+                        <label for="regConfirmPassword">Confirm Password</label>
+                        <span class="field-icon match-indicator" id="matchIndicator">
+                            <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <div class="terms-option">
+                        <label for="termsCheck">
+                            <input type="checkbox" id="termsCheck" required>
+                            <span>I agree to the <a href="#terms" id="termsLink">Terms of Service</a> & <a href="#privacy" id="privacyLink">Privacy Policy</a></span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="regSubmitBtn">
+                        <span>Create Account</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+
+                    <div class="account-option">
+                        <p>Already have an account? <a href="#signin" id="switchToSignIn">Sign In</a></p>
+                    </div>
+                </form>
             </div>
-        </form>
-    </main>
+
+            <!-- ============================================== -->
+            <!-- 3. FORGOT PASSWORD VIEW -->
+            <!-- ============================================== -->
+            <div class="auth-view" id="viewForgot">
+                <div class="login-header">
+                    <div class="brand-badge">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+                        </svg>
+                        Account Recovery
+                    </div>
+                    <h2>Reset Password</h2>
+                    <p>Enter your email and we'll send you recovery instructions</p>
+                </div>
+
+                <form id="forgotForm">
+                    <div class="input-field">
+                        <input type="email" id="forgotEmailInput" placeholder=" " required autocomplete="email">
+                        <label for="forgotEmailInput">Registered Email</label>
+                        <span class="field-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </span>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="forgotSubmitBtn">
+                        <span>Send Recovery Link</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+
+                    <div class="account-option">
+                        <p>Remembered your password? <a href="#signin" id="forgotBackToSignIn">Back to Sign In</a></p>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
 
     <!-- Feedback Toast Notification -->
     <div class="toast" id="toast" role="status" aria-live="polite">
